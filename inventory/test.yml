@@ -7,5 +7,5 @@ test:
   children:
     srv:
       hosts:
-        ish:
+        vdk:
           ansible_host: "ip"
