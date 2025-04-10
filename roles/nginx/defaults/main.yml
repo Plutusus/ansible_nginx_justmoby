@@ -1,0 +1,8 @@
+---
+# Параметр для блока "events" в nginx.conf
+worker_connections: 1024
+
+# Параметр для ограничения максимального размера тела запроса в конфигурации сайта
+client_max_body_size: "16m"
+
+domain_site: ansible.sisadmvdk.ru

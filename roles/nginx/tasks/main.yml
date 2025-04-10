@@ -1,0 +1,99 @@
+---
+
+# Обновление кэша apt
+- name: Обновление кэша apt
+  apt:
+    update_cache: yes
+
+# Установка nginx
+- name: Установка nginx
+  apt:
+    name: nginx
+    state: present
+
+# Установка python3-certbot-nginx
+- name:  python3-certbot-nginx
+  apt:
+    name: python3-certbot-nginx
+    state: present
+
+# Установка php-fpm
+- name:  php-fpm
+  apt:
+    name: php-fpm
+    state: present
+
+# Деплой шаблона основного конфига nginx
+- name: Деплой основного конфига nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+# Деплой конфига сайта
+- name: Деплой конфигурации сайта
+  template:
+    src: site.conf.j2
+    dest: /etc/nginx/conf.d/site.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+# Обеспечение существования каталога для сайта
+- name: Создание каталога /var/www/html
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+
+# Копирование приветственной страницы index.php
+- name: Развертывание приветственной страницы index.php
+  copy:
+    dest: /var/www/html/index.php
+    content: |
+      <?php
+      echo "<!DOCTYPE html>
+      <html lang='ru'>
+      <head>
+          <meta charset='utf-8'>
+          <title>Добро пожаловать!</title>
+      </head>
+      <body>
+          <h1>Добро пожаловать на мой сайт!</h1>
+          <p>Это приветственная страница.</p>
+      </body>
+      </html>";
+      ?>
+    owner: www-data
+    group: www-data
+    mode: "0644"
+
+
+# Запуск и включение nginx (гарантируем, что он запущен перед certbot)
+- name: Запуск и включение nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+# Установка certbot
+- name: Установка certbot
+  apt:
+    name: certbot
+    state: present
+
+# Запуск certbot с плагином nginx (после того, как nginx запущен и настроен)
+- name: Запуск certbot с плагином nginx
+  command: >
+    certbot --nginx --redirect --non-interactive --agree-tos -m vlad.klimov.int.99@gmail.com -d ansible.sisadmvdk.ru
+  register: certbot_nginx_result
+  notify: Print certbot --nginx Output
+
+# Тестовый запуск обновления сертификатов (certbot renew --dry-run) с выводом результата
+- name: Тестовый запуск certbot renew --dry-run
+  command: certbot renew --dry-run
+  register: certbot_renew_result

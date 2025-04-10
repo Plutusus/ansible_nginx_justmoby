@@ -1,0 +1,11 @@
+---
+test:
+  vars:
+    ansible_user: "пользователь"
+    ansible_become: true
+    ansible_become_pass: "пароль"
+  children:
+    srv:
+      hosts:
+        ish:
+          ansible_host: "ip"

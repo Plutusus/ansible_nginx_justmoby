@@ -1,0 +1,7 @@
+---
+- name: Установка и настройка nginx с php-fpm и certbot
+  hosts: ish
+  become: yes
+
+  roles:
+    - nginx

@@ -1,0 +1,4 @@
+---
+- name: Print certbot --nginx Output
+  debug:
+    msg: "{{ certbot_nginx_result.stdout }}"
