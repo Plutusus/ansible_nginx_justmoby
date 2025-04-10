@@ -1,6 +1,6 @@
 ---
 - name: Установка и настройка nginx с php-fpm и certbot
-  hosts: ish
+  hosts: vdk
   become: yes
 
   roles:
